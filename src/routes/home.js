@@ -50,6 +50,10 @@ module.exports = (app, data, client, mod, user) => {
     res.render("index.ejs", bundle);
   });
 
+  app.get("/api/emoticons", async (req, res) => {
+    res.json(emoticons.all)
+  })
+
   app.post("/submitShout", async (req, res) => {
     const collectionTarget = req.params.url;
     const inputData = req.body;
@@ -57,8 +61,6 @@ module.exports = (app, data, client, mod, user) => {
 
     var shout = req.sanitize(req.body.key2)
     var topic = req.body.key3;
-
-    // shout = check4html(shout)
 
     queryValueShout = topic + "_shouts"
 
@@ -113,6 +115,8 @@ module.exports = (app, data, client, mod, user) => {
     console.log(results.rows)
     res.redirect(`/topic/${submit_topic}`)
   })
+
+
 
   setInterval(async () => {
     //get all topics
