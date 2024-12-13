@@ -37,7 +37,7 @@ module.exports = (app, client, bcrypt, mod, user) => {
   ]
 
   //process log in
-  app.post("/user/438/loginAuthentication", validateChain,async (req, res) => {
+  app.post("/loginAuthentication", validateChain,async (req, res) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -92,7 +92,7 @@ module.exports = (app, client, bcrypt, mod, user) => {
   ]
 
   //process register
-  app.post("/user/438/registerAuthentication",validateChain2,async (req, res) => {
+  app.post("/registerAuthentication",validateChain2,async (req, res) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

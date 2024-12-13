@@ -53,7 +53,7 @@
           event.preventDefault(); 
           const formData = new FormData(document.getElementById("loginForm"));
           const dataSend = Object.fromEntries(formData.entries());
-          const response = await fetch('/loginAuthentication', {
+          const response = await fetch('./loginAuthentication', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
@@ -86,7 +86,7 @@
           event.preventDefault(); 
           const formData = new FormData(document.getElementById("registerForm"));
           const dataSend = Object.fromEntries(formData.entries());
-          const response = await fetch('/registerAuthentication', {
+          const response = await fetch('./registerAuthentication', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
