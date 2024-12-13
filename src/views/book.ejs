@@ -57,7 +57,7 @@
     event.preventDefault(); 
     const formData = new FormData(document.getElementById("topicForm"));
     const dataSend = Object.fromEntries(formData.entries());
-    const response = await fetch('/addingTopic', {
+    const response = await fetch('./addingTopic', {
       method: 'POST',
       headers: {
       'Content-Type': 'application/json'
