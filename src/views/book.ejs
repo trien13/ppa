@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/css/style.css" />
+    
+  </head>
+  
+<body>
+
+  <div id="middle">
+
+    <%- include('partials/header') %>
+
+     <form style="margin-top: 20px;">
+      <input type="text" id="filterkey" class="regItems" onkeyup="filtersearch()" placeholder="Search for topics..">
+      <p id="regError" class="error"></p>
+  </form>
+
+    <div class="content book">
+
+        <% for (var i = 0; i < topics.length; i++) {%>
+          <div class="topicInfo">
+           <a href="/topic/<%- topics[i].topics%>" style="font-size: 30px;">/<%- topics[i].topics%></a>
+          </div>
+        <% }%>
+    </div>
+
+    <% if (user.state == true) { %> 
+    <form id="topicForm" method="post" action="/addingTopic" style="margin-top: 20px;">
+      <label>Topic not found?</label>
+      <input type="text" name="topicName" class="regItems">
+      <button>Create topic</button>      
+      <p id="logError" class="error"></p>
+    </form>
+    <% } %> 
+  </div>
+<script>
+
+ filtersearch = () => {
+  filterKey = document.getElementById("filterkey").value.toUpperCase()
+  content = document.querySelector(".content.book")
+  topicDivs = content.getElementsByClassName("topicInfo")
+
+  for (i = 0; i<topicDivs.length; i++) {
+    a= topicDivs[i].getElementsByTagName("a")[0]
+    text = a.textContent || a.innerText;
+      if(text.toUpperCase().indexOf(filterKey) > -1) {
+        topicDivs[i].style.display = ""
+      } else {
+        topicDivs[i].style.display = "none"
+      }
+    }
+  }
+
+  document.getElementById("topicForm").addEventListener('submit', async (event) => {
+    event.preventDefault(); 
+    const formData = new FormData(document.getElementById("topicForm"));
+    const dataSend = Object.fromEntries(formData.entries());
+    const response = await fetch('/addingTopic', {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dataSend)
+    }).catch(error => console.error('Error:', error))
+    result = await response.json()
+
+    if(JSON.parse(result).success == "false") {
+      document.getElementById("logError").innerHTML = JSON.parse(result).erm
+    }
+
+    else if(JSON.parse(result).success == "true") {
+      document.getElementById("logError").innerHTML = "" //blank 
+      document.getElementById("logError").style.color = "green"
+      counter = 3
+      setInterval(() => {
+        if (counter > 0) {
+          document.getElementById("logError").innerHTML = JSON.parse(result).erm + counter
+          counter--
+        } 
+        else if (counter == 0) {
+          window.location.reload()
+        }
+      }, 1000)
+    }
+ })
+
+</script>
+
+  
+
+</body>
+
+</html>

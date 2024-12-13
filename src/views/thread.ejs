@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<!-- <meta http-equiv="refresh" content="5">  -->
+		<link rel="stylesheet" href="/css/style.css" />
+		<script type="text/javascript" src="/views/script/thread-script.js"></script>
+		
+	</head>
+	<body>
+
+	<div id="middle">
+
+	<%- include('partials/header') %>
+
+
+	<div class="thread">
+
+		<div class="topicInfoBar">
+			<div class="topicInfo" > <a href="/topic/<%-topic%>" style="font-size: 30px">/<%-topic%></a></div>
+			<div class="topicInfo" style="font-size: 30px">	/<%-thread[0].threads_numero%></div>
+		</div>
+
+		<div class="topicInfoBar">
+			<div class="topicInfo">
+				<pre><b><%-thread[0].threads_title%></b></pre>
+			</div>
+		</div>
+
+		<br>
+	
+			<div class="thread__reply__header">
+				<b class="info" style="margin-left: 0px;"><%-thread[0].threads_username%></b><p class="info">#0</p>
+				<a href="javascript:void(0);" onclick="replyBoxTrigger(0)" class="info">[reply]</a>
+			</div>
+		
+		<div class="thread__reply" id= "0"> 
+			<pre>
+				<%-thread[0].threads_content%> </pre>
+			
+		</div>
+	
+			<% if (thread[0].threads_reply != null) { %>
+			<% for (var i = 0; i < thread[0].threads_reply.length; i++) { %>
+				<% reply = JSON.parse(thread[0].threads_reply[i])%>
+			
+				<div class="thread__reply__folder" id="fol<%-i+1%>">
+					<div class="thread__reply__header"> 
+						<b class="info" style="margin-left: 0px;"><%-reply[0]%></b><p class="info">#<%-i+1%></p>
+						<a href="javascript:void(0);" onclick="replyBoxTrigger(<%-i+1%>)" class="info">[reply]</a>
+
+					</div>
+					
+					<div class="thread__reply" id=<%-i+1%>>
+						<pre>
+							 <%-reply[1]%>
+						</pre>
+					</div> 
+				</div> 
+			
+				<% if (reply[2] == 0) { %>
+					<script>
+						var i = <%-JSON.stringify(i)%>
+						folder = document.getElementById(`fol${i+1}`)
+						folder.style.marginBottom = "40px"
+						folder.style.marginTop = "40px"
+					</script>
+				<% } %>
+
+				<% if (reply[2] != 0) { %>
+					<script>
+						var reply = <%-JSON.stringify(reply)%>; var i = <%-JSON.stringify(i)%>;
+				
+						p = document.getElementById(`fol${reply[2]}`) 
+						c = document.getElementById(`fol${i+1}`)
+						c.style.marginLeft = c.style.marginLeft+40+"px"
+						p.appendChild(c)
+
+					</script>
+				<% } %>
+	
+			<% }%>
+			<% }%>
+
+				<form class="thread__input" id="replyBox" method="post" action="/submitReply">
+					<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;" id="replyBoxHeader">  
+						<button type="submit" id="replyBoxTarget" style="padding: 0 2px 0 2px; height: 20px;">reply to x</buton>
+						<button type="reset" style="width:20px ; height: 20px;" onclick="replyBoxClose()">X</button>
+						<input type="hidden" value="<%-user.username%>" name="reply_username">
+						<input type="hidden" value="" name="reply_parent" id="replyBoxParent">
+						<input type="hidden" value="<%-thread[0].threads_numero%>" name="reply_numero">
+						<input type="hidden" value="<%-topic%>" name="reply_topic">
+					</div>
+					<textarea name="reply_content" id="replyBoxContent"></textarea>
+				</form>
+			</div>   
+
+			<!-- BLANK PADDING -->
+			<!-- <div style="width: 200px; height: 500px">
+			
+			</div> -->
+			
+
+	</div>
+		
+		<script type="text/javascript">
+			const emoticons = <%-JSON.stringify(emo)%>
+
+			totalReply = document.getElementsByClassName("thread__reply__folder").length
+		if(!!window.EventSource) {
+	  	var source =  new EventSource('/sse-thread')
+	  	source.addEventListener('message', (e) => {
+	  		console.log(event.data)
+	      	var data = JSON.parse(event.data)
+	      	//create temp reply
+				fol = document.createElement("div")
+				totalReply++
+				fol.id = "fol" + totalReply
+				fol.className = "thread__reply__folder"
+				head = document.createElement("div")
+				head.className = "thread__reply__header"
+				head.innerHTML = `<b>`+data[0]+`</b><p class="info">#`+totalReply+`</p> <a href="javascript:void(0);" onclick="replyBoxTrigger(`+totalReply+`)" class="info">[reply]</a>` 
+				fol.appendChild(head)
+				if(data[2] != 0) {
+					document.getElementById("fol"+data[2]).appendChild(fol)
+				}
+				if (data[2] == 0) {
+					document.getElementById("fol"+data[2]).appendChild(fol)
+				}
+				body = document.createElement("div")
+				body.id = totalReply
+				body.className = "thread__reply"
+				body.innerHTML = `<pre>`+data[1]+`</pre>`
+				//indent
+				console.log("sse/checkpoint3")
+
+				fol.appendChild(body)
+				if(data[2] == 0 ) {
+					
+					fol.style.marginBottom = "40px"
+					fol.style.marginTop = "40px"
+				}
+				if(data[2] != 0) {
+					fol.style.marginLeft = "40px"
+				}
+	    	})
+	    	source.addEventListener('open', (e)  =>  {
+	    	})
+	    } else {
+	      console.log("no working")
+	    }
+		</script>
+		
+
+	</body>
+
+</html>

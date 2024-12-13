@@ -1,0 +1,150 @@
+<div class="shoutbox">
+  <!-- banner -->
+  <div class="shoutbox__banner">
+  </div>
+
+  <div class="shoutbox--horizontal">
+    <div class="shoutbox--vertical">
+      <!-- chat log  -->
+      <div class="shoutbox__log">
+
+        <% if (oldShout != null) { for(var i=0;i< oldShout.length; i++) { %>
+        <p><span class="time"><%=oldShout[i].time.slice(0,5)%></span> <b><%=oldShout[i].username%>: </b><%=oldShout[i].shout%></p>
+        <% }} %>
+        <p id="data"></p>
+
+        <br>
+
+      </div>
+
+      <script>
+        if(!!window.EventSource) {
+          var source =  new EventSource('/sse')
+          source.addEventListener('message', (e) => {
+            var data = JSON.parse(event.data)
+            document.getElementById("data").innerHTML += "<span class='time'>"+data.time.slice(0,5)+"</span> " + "<b>"+data.username+": </b>" + data.shout +"<br>"
+            etag2emoticons()
+            stick2bottom()
+          })
+          source.addEventListener('open', (e)  =>  {
+          })
+        } else {
+          console.log("no working")
+        }
+      </script>
+
+      <!-- user input shout  -->
+      <div class="shoutbox__input" >
+        <input type="text" id="input" maxlength="150" placeholder="Shout something..."/>
+      </div>
+    </div>
+
+    <!-- container for emoticons display -->
+    <div class="shoutbox__emoticon" >
+
+      <div class="box">
+      
+        <% for(var i=0; i<emo.length; i++) {%>
+        <img src= "<%=emo[i].link%>" onclick="addEmoticon(`<%=emo[i].etag%>`)">
+        <%}%>
+
+      </div>
+
+  
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+
+  // quick shoutbox toggle
+  const shoutboxInput = document.getElementById("input");
+
+  document.addEventListener("keydown", function(event){
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      shoutboxInput.blur();
+      ph()
+    }
+  });
+
+  function ph() {
+    let isFocus = (document.activeElement === shoutboxInput)
+    if (isFocus) {
+      shoutboxInput.placeholder = ""
+    } else if(!isFocus && shoutboxInput.placeholder === "") {
+      shoutboxInput.placeholder = "Shout something..."
+    }
+  }
+
+  // add etag to input
+  addEmoticon = (etag) => {
+    let isFocus = (document.activeElement ===  document.getElementById("input"))
+    const shoutboxInput = document.getElementById("input");
+    if(!isFocus){shoutboxInput.focus()}
+    shoutboxInput.value += etag
+  }
+
+  // change log's etag to emoticon 
+  etag2emoticons = () => {
+    const log = document.querySelector('.shoutbox__log')
+    const regex = /:\w+:/g;
+    const matches =  log.innerHTML.match(regex); //get all :etag:
+    const emoticons = <%- JSON.stringify(emo)%> // get all emoticons objects
+    imgTemplate = `<img src="replacethisyo">`
+    
+    if (matches != null) {
+      for (let i = 0; i < matches.length; i++) {
+        let index = emoticons.findIndex(item => item.etag == matches[i]) // find matches etag in emoticons 
+        try {
+          let replacement = imgTemplate.replace("replacethisyo", emoticons[index].link)
+          log.innerHTML = log.innerHTML.replace(matches[i], replacement );
+        } catch {continue}
+      }
+    }
+  }
+
+  etag2emoticons()
+
+  // submit shout
+  shoutboxInput.onkeydown = (event) => {
+    if1: if (event.key == "Enter" && shoutboxInput.value.trim().length >= 1) {
+      event.preventDefault();
+      var formData = new FormData();
+      formData.append("key1", '<%-user.username%>');
+      formData.append("key2", shoutboxInput.value.trim());
+      formData.append("key3", '<%-topic%>')
+     
+      var formDataObject = {};
+
+      for (var pair of formData.entries()) {
+        formDataObject[pair[0]] = pair[1]; // username
+        formDataObject[pair[1]] = pair[3]; // shout
+        formDataObject[pair[2]] = pair[4]; // shout
+      }
+
+      // POST input to server
+      fetch("/submitShout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formDataObject),
+      })
+      .catch(error => console.error('Error:', error))
+    
+      shoutboxInput.value = ""
+    }
+  }; 
+
+  // stick to bottom of shoutbox
+  stick2bottom = () => {
+    var elem = document.querySelector('.shoutbox__log');
+    elem.scrollTop = elem.scrollHeight
+  }
+  stick2bottom()
+
+</script>

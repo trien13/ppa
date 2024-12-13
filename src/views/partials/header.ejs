@@ -1,0 +1,26 @@
+<header>
+  <div class="nase"><a href="/">Directories</a></div>
+
+    <% if (user.state != true && user.state != false  ) { %>
+    <% var user = {state: false} // faking state to set the navigation%>
+    <% } %>
+          
+    <% if (user.state == false) { %>
+      <div class="nase">Welcome <b><i><%-user.username%>!</i></b></div> 
+      <div class="nase"><a href="/login">Log in </a></div>     
+    <% } else { %>
+      <div class="nase">Welcome <b><i><%-user.username%>!</i></b></div> 
+        <%}%>
+    <% if (user.state == true) { %> 
+      <div class="nase"><a href="/logout">Log out </a></div>
+    <% } %>
+
+    <div class="nase"><a href="/help">Help</a></div>
+
+
+</header>
+
+
+<script>
+  //change login to "Welcome name" or user page.
+</script>

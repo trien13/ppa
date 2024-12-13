@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/css/style.css" />
+    
+  </head>
+  <body>
+
+    <div id="left">
+    </div>
+
+    <div id="middle">
+
+    <%- include('partials/header') %>
+
+    <div class="content login">
+  
+    <form class ="authForm" id="loginForm" method="post" action="/loginAuthentication">
+      <label>username</label>
+      <input type="text" name="username">
+      <label>password</label>
+      <input type="password" name="password">
+      <button>login</button>
+
+      <p id="logError" class="error"></p>
+
+    </form>
+
+      <br>
+      <br>
+
+    <form class="authForm" id="registerForm" method="post" action="/registerAuthentication">
+      <label>username</label>
+      <input type="text" name="reg_username" class="regItems">
+      
+      <label>password</label>
+      <input type="password" name="reg_password" class="regItems">
+
+      <label>password again</label>
+      <input type="password" name="reg_password2" class="regItems">
+     
+      <button>create account</button>      
+
+      <p id="regError" class="error"></p>
+
+    </form>
+  </div>
+
+  <script type="text/javascript">
+
+      document.getElementById("loginForm").addEventListener('submit', async (event) => {
+          event.preventDefault(); 
+          const formData = new FormData(document.getElementById("loginForm"));
+          const dataSend = Object.fromEntries(formData.entries());
+          const response = await fetch('/loginAuthentication', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataSend)
+          }).catch(error => console.error('Error:', error))
+          result = await response.json()
+
+          if(JSON.parse(result).success == "false") {
+            document.getElementById("logError").innerHTML = JSON.parse(result).erm
+          }
+
+          else if(JSON.parse(result).success == "true") {
+            document.getElementById("logError").innerHTML = "" //blank 
+            document.getElementById("logError").style.color = "green"
+            counter = 3
+            setInterval(() => {
+              if (counter > 0) {
+                document.getElementById("logError").innerHTML = JSON.parse(result).erm + counter
+                counter--
+              } 
+              else if (counter == 0) {
+                window.location.replace(document.referrer)
+              }
+            }, 1000)
+          }
+      })
+
+      document.getElementById("registerForm").addEventListener('submit', async (event) => {
+          event.preventDefault(); 
+          const formData = new FormData(document.getElementById("registerForm"));
+          const dataSend = Object.fromEntries(formData.entries());
+          const response = await fetch('/registerAuthentication', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataSend)
+          }).catch(error => console.error('Error:', error))
+          result = await response.json()
+
+          if(JSON.parse(result).success == "false") {
+            document.getElementById("regError").innerHTML = JSON.parse(result).erm
+          }
+          else if(JSON.parse(result).success == "true") {
+            regItems = document.getElementsByClassName("regItems")
+            for (var i = 0; i < regItems.length; i++) {
+              regItems[i].value = ""
+            }
+          
+            document.getElementById("regError").style.color = "green" //change to green
+            document.getElementById("regError").innerHTML = JSON.parse(result).erm // write success message
+          }
+      })
+      
+  </script>
+  <!--end of inner div-->
+</div>
+
+  <div id="right">
+  </div>
+
+  </body>
+
+
+</html>

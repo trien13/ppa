@@ -1,0 +1,119 @@
+<div class="content__thread">
+
+  <div class="content__menu">
+    <% if (user.state == false) { %>
+      <div class="nase"><a href="/login">Login to start a thread</a></div>
+      <div class="nase" style="display: none;" id="add"></div>
+    <% } else if (user.state == true) { %>
+      <div class="nase"><a href="javascript:void(0)" id="add">Start a thread</a></div>
+    <% } %>
+    <div class="nase"><a href="javascript:void(0)" id="none">New</a></div>
+    <div class="nase"><a href="javascript:void(0)" id="none">Replies</a></div>
+  </div>
+
+  <table style= "max-width: 900px;">  
+
+    <% for (var i = 0; i < threads.length; i++) {%>
+  <tr name="ThreadData">
+      <td style="width: 500px; max-width: 500px; white-space: nowrap;overflow: hidden; text-overflow: ellipsis ; padding-right: 50px" >
+        <a href='/<%-topic%>/<%-threads[i].threads_numero%>' style=" color:black;">
+          <%-threads[i].threads_title%>
+        </a>
+      </td>
+      <td style="width: 400px; max-width: 400px"><span class="info">by <b class="tdinfo"><%-threads[i].threads_username%></b>
+        <span class="tdinfo time-ago" data-timecreated="<%-threads[i].threads_timecreated %>"></span>
+        <span class="tdinfo">
+          <% if (threads[i].threads_reply != null) { %>
+            <%-JSON.parse(threads[i].threads_reply.length)%> replies
+          <% } else {%>
+            0 replies
+          <% } %>
+        </span> 
+        <span class="tdinfo time-ago-last" style="width: 100px;" data-timecreated="<%-threads[i].threads_lastactive %>"></span>
+      </span>
+      </td>
+
+    </tr>
+    <% }%>
+  </table>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <div id="modal__editing">
+      <form action="/submitThread" method="post">
+        <input placeholder="title *" name="title" required id="title">
+        
+        <textarea placeholder="content *" name="content"required></textarea>
+
+        <button id="button_review" type="submit">submit</button>
+        <input type="hidden" value='<%-user.username%>' name="username" >
+        <input type="hidden" value='<%-topic%>' name="topic" >
+      </form>
+    </div>
+
+    <script type="text/javascript">
+      var modal = document.getElementById("myModal")
+      var modal_edit = document.getElementById("modal__editing")
+      var add = document.getElementById("add")
+      var review = document.getElementById("button_review")
+
+      
+        add.onclick = function() {
+          modal.style.display = "block"
+          modal_edit.style.display = "block"
+        }
+    
+      // window.onload = (event) => {
+      //   modal.style.display = "block"
+      //   modal_edit.style.display = "block"
+      // }
+  
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none"
+          modal_edit.style.display = "none"
+        }
+      }
+
+      timeAgo = (timestamp) => {
+        const now = new Date();
+        const past = new Date(timestamp);
+        const seconds = Math.floor((now - past) / 1000);
+
+        if (seconds < 1) {
+          return "just now";
+        }
+        const intervals = [
+            { label: "y", seconds: 31536000 },
+            { label: "m", seconds: 2592000 },
+            { label: "w", seconds: 604800 },
+            { label: "d", seconds: 86400 },
+            { label: "h", seconds: 3600 },
+            { label: "m", seconds: 60 },
+            { label: "s", seconds: 1 }
+        ];
+
+        for (const { label, seconds: intervalsec } of intervals) {
+          count = Math.floor(seconds / intervalsec);
+          if (count > 0) {
+            return `${count}${label} ago`;
+          }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".time-ago").forEach(element => {
+            const timestamp = element.getAttribute("data-timecreated");
+            element.textContent = timeAgo(timestamp);
+        });
+
+        document.querySelectorAll(".time-ago-last").forEach(element => {
+            const timestamp = element.getAttribute("data-timecreated");
+            element.textContent = "last: " + timeAgo(timestamp);
+        });
+    });
+
+    </script> 
+  </div>
+
+</div>
