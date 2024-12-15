@@ -19,7 +19,7 @@
 
       <script>
         if(!!window.EventSource) {
-          var source =  new EventSource('/sse')
+          var source =  new EventSource('./sse')
           source.addEventListener('message', (e) => {
             var data = JSON.parse(event.data)
             document.getElementById("data").innerHTML += "<span class='time'>"+data.time.slice(0,5)+"</span> " + "<b>"+data.username+": </b>" + data.shout +"<br>"
@@ -127,7 +127,7 @@
       }
 
       // POST input to server
-      fetch("/submitShout", {
+      fetch("./submitShout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
