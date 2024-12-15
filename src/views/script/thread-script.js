@@ -78,7 +78,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
 		if (matches != null) {} 
 		else {return false}
 	}
-	check4html()
 
 	document.getElementById("replyBox").addEventListener('submit', async (event) => {
 		event.preventDefault(); 

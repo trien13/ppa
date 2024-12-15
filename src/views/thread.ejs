@@ -108,7 +108,7 @@
 
 			totalReply = document.getElementsByClassName("thread__reply__folder").length
 		if(!!window.EventSource) {
-	  	var source =  new EventSource('./sse-thread')
+	  	var source =  new EventSource('../sse-thread')
 	  	source.addEventListener('message', (e) => {
 	  		console.log(event.data)
 	      	var data = JSON.parse(event.data)

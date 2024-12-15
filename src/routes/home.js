@@ -111,9 +111,6 @@ module.exports = (app, data, client, mod, user) => {
 
     queryValueThread = submit_topic + "_threads"
 
-    submit_content = check4html(submit_content)
-    submit_title = check4html(submit_title)
-
     const query =  `INSERT INTO ${queryValueThread} (threads_title, threads_username, threads_content, threads_numero, threads_reply) VALUES ($1, $2, $3, $4, $5) RETURNING *;`
     var values = [submit_title, submit_username, submit_content, submit_numero, submit_reply];
     var results = await client.query(query, values);
@@ -135,7 +132,7 @@ module.exports = (app, data, client, mod, user) => {
         await client.query(query2);
         //go through all threads and delete entries accordingly
         queryValueThread = results_topic.rows[i].topics + "_threads"
-        const query3 = `DELETE FROM ${queryValueThread} WHERE CURRENT_TIMESTAMP >= "threads_lastactive" + INTERVAL '24 hours'`;
+        const query3 = `DELETE FROM ${queryValueThread} WHERE CURRENT_TIMESTAMP >= "threads_lastactive" + INTERVAL '30 days'`;
         await client.query(query3);
       }
     } 

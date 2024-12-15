@@ -1,5 +1,6 @@
 const { EventEmitter } = require("events");
 const eventEmitter = new EventEmitter();
+var emoticons = require("./data.json");
 
 module.exports = function (app, client, user, data) {
   var dummyData = require("./data.json");
@@ -27,7 +28,7 @@ module.exports = function (app, client, user, data) {
     const results_thread_found = await client.query(query);
 
     let bundle = Object.assign({}, data, {
-      emo: dummyData.emo,
+      emo: emoticons.all,
       thread: results_thread_found.rows,
       user,
     });
