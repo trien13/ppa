@@ -69,9 +69,7 @@ module.exports = (app, data, client, mod, user) => {
       values: [username, shout],
     }
     const results = await client.query(query);
-    console.log("check1"
     await eventEmitter.emit("pushShout", results);
-    console.log("check1.2")
     res.end();
   });
 
@@ -82,12 +80,16 @@ module.exports = (app, data, client, mod, user) => {
       Connection: "keep-alive",
     });
 
+    setInterval(() => {
+      res.write(': keep-alive\n\n'); 
+      console.log("check keep alive")
+    }, 15000); 
+
     //push new shout to front end
     const pushShout = async (data) => {
       const eventData = JSON.stringify(data.rows[0]);
-      console.log("check2")
       res.write(`data: ${eventData}\n\n`);
-      console.log("check2.2")
+      console.log("shout sended")
     };
 
     //trigger
