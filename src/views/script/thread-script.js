@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 		event.preventDefault(); 
     const formData = new FormData(document.getElementById("replyBox"));
     const dataSend = Object.fromEntries(formData.entries());
-	  const response = await fetch('/submitReply', {
+	  const response = await fetch('../submitReply', {
 	      method: 'POST',
 	      headers: {
 	        'Content-Type': 'application/json'
