@@ -82,7 +82,6 @@ module.exports = (app, data, client, mod, user) => {
 
     setInterval(() => {
       res.write(': keep-alive\n\n'); 
-      console.log("check keep alive")
     }, 15000); 
 
     //push new shout to front end
@@ -115,7 +114,7 @@ module.exports = (app, data, client, mod, user) => {
     var values = [submit_title, submit_username, submit_content, submit_numero, submit_reply];
     var results = await client.query(query, values);
     console.log(results.rows)
-    res.redirect(`/topic/${submit_topic}`)
+    res.redirect('back')
   })
 
 
