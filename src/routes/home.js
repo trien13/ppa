@@ -78,6 +78,7 @@ module.exports = (app, data, client, mod, user) => {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
       Connection: "keep-alive",
+      "Access-Control-Allow-Origin": "*",
     });
 
     res.write('Connection established\n\n');

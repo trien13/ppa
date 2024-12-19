@@ -28,10 +28,6 @@
           })
           source.addEventListener('open', (e)  =>  {
             console.log("sse connection ready..")
-              setInterval(() => {
-                source.send('ping');
-                console.log("ping test")
-              }, 3000);
           })
         } else {
           console.log("no working")
