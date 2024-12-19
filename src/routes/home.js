@@ -80,6 +80,8 @@ module.exports = (app, data, client, mod, user) => {
       Connection: "keep-alive",
     });
 
+    res.write('Connection established\n\n');
+
     setInterval(() => {
       res.write(': keep-alive\n\n'); 
     }, 15000); 
